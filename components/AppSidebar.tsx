@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Home, List, Settings } from 'lucide-react';
+import { Home, List, Settings, Search } from 'lucide-react';
 
 export function AppSidebar() {
     return (
@@ -15,6 +15,10 @@ export function AppSidebar() {
                 <Link href="/sites" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground transition-colors">
                     <List size={20} />
                     <span>Sites</span>
+                </Link>
+                <Link href="/quick-check" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground transition-colors">
+                    <Search size={20} />
+                    <span>Site Check</span>
                 </Link>
                 <Link href="#" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground transition-colors">
                     <Settings size={20} />

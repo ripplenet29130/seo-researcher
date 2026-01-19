@@ -24,6 +24,9 @@ export async function createClient() {
                     }
                 },
             },
+            db: {
+                schema: process.env.NEXT_PUBLIC_SUPABASE_SCHEMA || 'public',
+            },
         }
     )
 }

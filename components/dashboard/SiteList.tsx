@@ -42,7 +42,7 @@ export function SiteList({ sites }: { sites: Site[] }) {
                     onClick={() => router.push(`/sites/${site.id}`)}
                 >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
+                        <CardTitle className="text-2xl font-bold truncate">
                             {site.site_name}
                         </CardTitle>
                         <div className="flex gap-1">
@@ -61,22 +61,22 @@ export function SiteList({ sites }: { sites: Site[] }) {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold truncate" title={site.site_url}>
-                            {site.site_url.replace(/^https?:\/\//, '')}
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                            Added: {new Date(site.created_at).toLocaleDateString()}
-                        </p>
-                        <Button
-                            variant="link"
-                            className="px-0 mt-2 h-auto"
+                        <div
+                            className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:underline hover:text-primary transition-colors group w-fit cursor-pointer"
+                            title={site.site_url}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 window.open(site.site_url, '_blank');
                             }}
                         >
-                            Visit Site <ExternalLink className="ml-1 h-3 w-3" />
-                        </Button>
+                            <span className="truncate">
+                                {site.site_url.replace(/^https?:\/\//, '')}
+                            </span>
+                            <ExternalLink className="h-3 w-3 flex-shrink-0 opacity-70 group-hover:opacity-100" />
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-3">
+                            登録日: {new Date(site.created_at).toLocaleDateString()}
+                        </p>
                     </CardContent>
                 </Card>
             ))}

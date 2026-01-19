@@ -97,7 +97,7 @@ export function FetchRankingsButton({
             ) : (
                 <>
                     <TrendingUp className="mr-2 h-4 w-4" />
-                    順位を取得 ({selectedKeywordIds.length})
+                    チェックしたキーワードの順位を取得 ({selectedKeywordIds.length})
                 </>
             )}
         </Button>

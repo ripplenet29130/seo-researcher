@@ -38,10 +38,6 @@ export function SiteDetailClient({
                 </div>
                 <div className="flex gap-2">
                     <KeywordRegisterDialog siteId={site.id} />
-                    <FetchRankingsButton
-                        siteId={site.id}
-                        selectedKeywordIds={selectedKeywordIds}
-                    />
                 </div>
             </div>
 
@@ -59,7 +55,7 @@ export function SiteDetailClient({
 
                 <section>
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-semibold">Rankings & Keywords</h2>
+                        <h2 className="text-xl font-semibold">順位とキーワード</h2>
                     </div>
                     <KeywordTable
                         siteId={site.id}
@@ -74,7 +70,7 @@ export function SiteDetailClient({
                 {chartKeywords.length > 0 && (
                     <section>
                         <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-xl font-semibold">Ranking Trend</h2>
+                            <h2 className="text-xl font-semibold">順位の推移</h2>
                         </div>
                         <RankingChart keywords={chartKeywords} />
                     </section>

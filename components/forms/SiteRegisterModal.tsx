@@ -119,7 +119,7 @@ export function SiteRegisterModal() {
                     <DialogFooter>
                         <Button type="submit" disabled={loading} className="transition-all duration-200 hover:scale-105 hover:shadow-lg">
                             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Save
+                            保存する
                         </Button>
                     </DialogFooter>
                 </form>

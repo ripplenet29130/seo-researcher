@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { KeywordWithRanking } from '@/lib/types';
 import { getColorForKeyword } from '@/lib/utils';
 import { DeleteKeywordsButton } from '@/components/buttons/DeleteKeywordsButton';
+import { FetchRankingsButton } from '@/components/buttons/FetchRankingsButton';
 import {
     Table,
     TableBody,
@@ -12,7 +13,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 
@@ -35,7 +36,7 @@ export function KeywordTable({
         return (
             <Card>
                 <CardContent className="py-10 text-center text-muted-foreground">
-                    No keywords registered yet.
+                    キーワードがまだ登録されていません。
                 </CardContent>
             </Card>
         );
@@ -64,10 +65,9 @@ export function KeywordTable({
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                 <CardTitle className="text-xl font-bold">Keywords ({keywords.length})</CardTitle>
-                <DeleteKeywordsButton
+                <FetchRankingsButton
                     siteId={siteId}
                     selectedKeywordIds={selectedKeywords}
-                    onSuccess={onDeleteSuccess}
                 />
             </CardHeader>
             <CardContent>
@@ -82,11 +82,11 @@ export function KeywordTable({
                                     className={someSelected ? 'data-[state=checked]:bg-primary/50' : ''}
                                 />
                             </TableHead>
-                            <TableHead>Keyword</TableHead>
-                            <TableHead>Latest Rank</TableHead>
-                            <TableHead>Device</TableHead>
-                            <TableHead>Location</TableHead>
-                            <TableHead>Last Checked</TableHead>
+                            <TableHead>キーワード</TableHead>
+                            <TableHead>現在の順位</TableHead>
+                            <TableHead>デバイス</TableHead>
+                            <TableHead>場所</TableHead>
+                            <TableHead>最終更新日</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -130,6 +130,13 @@ export function KeywordTable({
                     </TableBody>
                 </Table>
             </CardContent>
+            <CardFooter className="flex justify-end pt-4 border-t">
+                <DeleteKeywordsButton
+                    siteId={siteId}
+                    selectedKeywordIds={selectedKeywords}
+                    onSuccess={onDeleteSuccess}
+                />
+            </CardFooter>
         </Card>
     );
 }

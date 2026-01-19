@@ -116,7 +116,7 @@ export function DeleteKeywordsButton({
         <AlertDialog open={open} onOpenChange={handleOpenChange}>
             <AlertDialogTrigger asChild>
                 <Button
-                    disabled={loading}
+                    disabled={loading || selectedKeywordIds.length === 0}
                     variant="destructive"
                     size="sm"
                     title="Delete selected keywords"

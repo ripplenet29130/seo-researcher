@@ -19,10 +19,10 @@ export function RankingChart({ keywords }: { keywords: KeywordWithRanking[] }) {
         return (
             <Card>
                 <CardHeader>
-                    <CardTitle>Ranking Trend</CardTitle>
+                    <CardTitle>順位の推移</CardTitle>
                 </CardHeader>
                 <CardContent className="text-center text-muted-foreground py-10">
-                    No ranking data available yet. Select keywords or click "Fetch Rankings" to get started.
+                    ランキングデータがまだありません。キーワードを選択するか「順位を取得」をクリックして開始してください。
                 </CardContent>
             </Card>
         );
@@ -72,8 +72,8 @@ export function RankingChart({ keywords }: { keywords: KeywordWithRanking[] }) {
             <CardHeader>
                 <CardTitle>
                     {keywords.length === 1
-                        ? `Ranking Trend: ${keywords[0].keyword}`
-                        : `Ranking Trend (${keywords.length} keywords)`}
+                        ? `順位の推移: ${keywords[0].keyword}`
+                        : `順位の推移 (${keywords.length} キーワード)`}
                 </CardTitle>
             </CardHeader>
             <CardContent>
@@ -95,7 +95,7 @@ export function RankingChart({ keywords }: { keywords: KeywordWithRanking[] }) {
                                 domain={[1, 100]}
                                 ticks={[1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]}
                                 tick={{ fontSize: 12 }}
-                                label={{ value: 'Rank', angle: -90, position: 'insideLeft', offset: 10 }}
+                                label={{ value: '順位', angle: -90, position: 'insideLeft', offset: 10 }}
                             />
                             <Tooltip
                                 cursor={{ stroke: '#9ca3af', strokeWidth: 1, strokeDasharray: '3 3' }}
@@ -112,7 +112,7 @@ export function RankingChart({ keywords }: { keywords: KeywordWithRanking[] }) {
                                                         if (!kw) return null;
 
                                                         const rankDisplay = entry.value === 100 ? '圈外' : `#${entry.value}`;
-                                                        const deviceLabel = kw.device === 'mobile' ? ' (Mobile)' : ' (Desktop)';
+                                                        const deviceLabel = kw.device === 'mobile' ? ' (モバイル)' : ' (PC)';
 
                                                         return (
                                                             <p key={kwId} className="text-sm font-bold flex items-center gap-2">
@@ -138,7 +138,7 @@ export function RankingChart({ keywords }: { keywords: KeywordWithRanking[] }) {
                             />
                             {keywords.map((kw) => {
                                 const color = getColorForKeyword(kw.keyword);
-                                const deviceLabel = kw.device === 'mobile' ? ' (Mobile)' : ' (Desktop)';
+                                const deviceLabel = kw.device === 'mobile' ? ' (モバイル)' : ' (PC)';
                                 return (
                                     <Line
                                         key={kw.id}

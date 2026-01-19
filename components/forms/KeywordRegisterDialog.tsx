@@ -120,9 +120,9 @@ export function KeywordRegisterDialog({ siteId }: { siteId: string }) {
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="both">両方 (Desktop + Mobile)</SelectItem>
-                                    <SelectItem value="desktop">Desktop のみ</SelectItem>
-                                    <SelectItem value="mobile">Mobile のみ</SelectItem>
+                                    <SelectItem value="both">両方 (PC + モバイル)</SelectItem>
+                                    <SelectItem value="desktop">PC のみ</SelectItem>
+                                    <SelectItem value="mobile">モバイル のみ</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

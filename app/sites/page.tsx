@@ -16,9 +16,9 @@ export default async function SitesPage() {
         <div className="max-w-7xl mx-auto py-10 px-8">
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Sites</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">登録サイト</h1>
                     <p className="text-muted-foreground">
-                        All registered websites for SEO tracking.
+                        SEO追跡用に登録されたすべてのサイト。
                     </p>
                 </div>
                 <SiteRegisterModal />

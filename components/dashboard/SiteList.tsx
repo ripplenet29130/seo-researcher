@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalLink, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { EditSiteDialog } from '@/components/forms/EditSiteDialog';
 
 export function SiteList({ sites }: { sites: Site[] }) {
     const router = useRouter();
@@ -44,17 +45,20 @@ export function SiteList({ sites }: { sites: Site[] }) {
                         <CardTitle className="text-sm font-medium">
                             {site.site_name}
                         </CardTitle>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleDelete(site.id);
-                            }}
-                        >
-                            <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <div className="flex gap-1">
+                            <EditSiteDialog site={site} />
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDelete(site.id);
+                                }}
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold truncate" title={site.site_url}>

@@ -60,3 +60,9 @@ BEGIN
         CREATE POLICY "Allow all access to rankings" ON seo_researcher.rankings FOR ALL USING (true) WITH CHECK (true);
     END IF;
 END $$;
+
+-- 7. Grant Permissions to App Roles (CRITICAL for Custom Schema)
+GRANT USAGE ON SCHEMA seo_researcher TO anon, authenticated, service_role;
+GRANT ALL ON ALL TABLES IN SCHEMA seo_researcher TO anon, authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA seo_researcher TO anon, authenticated, service_role;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA seo_researcher TO anon, authenticated, service_role;

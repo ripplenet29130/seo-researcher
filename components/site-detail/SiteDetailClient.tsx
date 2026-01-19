@@ -7,6 +7,7 @@ import { KeywordTable } from '@/components/tables/KeywordTable';
 import { FetchRankingsButton } from '@/components/buttons/FetchRankingsButton';
 import { RankingChart } from '@/components/site-detail/RankingChart';
 import { AutoFetchSettings } from '@/components/site-detail/AutoFetchSettings';
+import { ChatworkSettings } from '@/components/site-detail/ChatworkSettings';
 
 export function SiteDetailClient({
     site,
@@ -75,6 +76,10 @@ export function SiteDetailClient({
                         <RankingChart keywords={chartKeywords} />
                     </section>
                 )}
+
+                <section>
+                    <ChatworkSettings siteId={site.id} siteName={site.site_name} />
+                </section>
             </div>
         </>
     );

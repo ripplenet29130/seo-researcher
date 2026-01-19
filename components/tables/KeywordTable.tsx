@@ -65,9 +65,10 @@ export function KeywordTable({
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                 <CardTitle className="text-xl font-bold">Keywords ({keywords.length})</CardTitle>
-                <FetchRankingsButton
+                <DeleteKeywordsButton
                     siteId={siteId}
                     selectedKeywordIds={selectedKeywords}
+                    onSuccess={onDeleteSuccess}
                 />
             </CardHeader>
             <CardContent>
@@ -131,10 +132,9 @@ export function KeywordTable({
                 </Table>
             </CardContent>
             <CardFooter className="flex justify-end pt-4 border-t">
-                <DeleteKeywordsButton
+                <FetchRankingsButton
                     siteId={siteId}
                     selectedKeywordIds={selectedKeywords}
-                    onSuccess={onDeleteSuccess}
                 />
             </CardFooter>
         </Card>

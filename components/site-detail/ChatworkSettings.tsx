@@ -29,6 +29,7 @@ export function ChatworkSettings({ siteId, siteName }: ChatworkSettingsProps) {
     const [reportDayOfWeek, setReportDayOfWeek] = useState(1); // Monday
     const [reportDayOfMonth, setReportDayOfMonth] = useState(1);
     const [reportPeriod, setReportPeriod] = useState(7); // 7, 30, or 90 days
+    const [reportMentionId, setReportMentionId] = useState('');
     const [template, setTemplate] = useState(DEFAULT_MESSAGE_TEMPLATE);
 
     const supabase = createClient();
@@ -53,6 +54,7 @@ export function ChatworkSettings({ siteId, siteName }: ChatworkSettingsProps) {
                 setReportDayOfWeek(data.report_day_of_week);
                 setReportDayOfMonth(data.report_day_of_month);
                 setReportPeriod(data.report_period || 7);
+                setReportMentionId(data.report_mention_id || '');
                 setTemplate(data.message_template || DEFAULT_MESSAGE_TEMPLATE);
             }
         } catch (error) {
@@ -84,6 +86,7 @@ export function ChatworkSettings({ siteId, siteName }: ChatworkSettingsProps) {
                     report_day_of_week: reportDayOfWeek,
                     report_day_of_month: reportDayOfMonth,
                     report_period: reportPeriod,
+                    report_mention_id: reportMentionId,
                     message_template: template,
                 }, { onConflict: 'site_id' });
 
@@ -139,7 +142,11 @@ export function ChatworkSettings({ siteId, siteName }: ChatworkSettingsProps) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     token: tokenData.value,
-                    roomId: roomId
+                    roomId: roomId,
+                    siteId: siteId,
+                    template: template,
+                    reportPeriod: reportPeriod,
+                    mentionId: reportMentionId
                 }),
             });
 
@@ -158,7 +165,7 @@ export function ChatworkSettings({ siteId, siteName }: ChatworkSettingsProps) {
             console.error('Test send error:', error);
             toast({
                 title: "送信失敗",
-                description: "テストメッセージの送信に失敗しました",
+                description: error instanceof Error ? error.message : "テストメッセージの送信に失敗しました",
                 variant: 'destructive',
             });
         } finally {
@@ -283,6 +290,19 @@ export function ChatworkSettings({ siteId, siteName }: ChatworkSettingsProps) {
                             />
                             <p className="text-xs text-muted-foreground">
                                 ChatworkのURL末尾の数字です（例: #!rid000000000 の数字部分）
+                            </p>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="mentionId">通知先アカウントID（任意）</Label>
+                            <Input
+                                id="mentionId"
+                                value={reportMentionId}
+                                onChange={(e) => setReportMentionId(e.target.value)}
+                                placeholder="1234567"
+                                className="max-w-md"
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                特定の個人にメンションを送る場合に、相手のアカウントIDを入力してください。
                             </p>
                         </div>
                     </div>

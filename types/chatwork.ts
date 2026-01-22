@@ -9,6 +9,7 @@ export interface ChatworkSiteSettings {
     report_day_of_week: number; // 0-6 (0 is Sunday)
     report_day_of_month: number; // 1-31
     report_period: number; // 7, 30, or 90 days
+    report_mention_id: string | null;
     message_template: string;
     last_report_at: string | null;
     created_at: string;
@@ -22,8 +23,14 @@ export interface AppSettings {
     updated_at: string;
 }
 
-export const DEFAULT_MESSAGE_TEMPLATE = `【SEO順位報告】
-サイト: {site_name}
-期間: {period}
+export const DEFAULT_MESSAGE_TEMPLATE = `{mention}
 
-{rankings}`;
+いつもお世話になっております。
+
+{site_name} の最新の検索順位レポート（集計期間: {period}）をお送りいたします。
+
+--------------------------------------------------
+{rankings}
+--------------------------------------------------
+
+ご確認のほど、よろしくお願いいたします。`;

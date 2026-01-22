@@ -27,7 +27,7 @@ export async function setChatworkToken(token: string): Promise<void> {
     if (error) throw error;
 }
 
-export async function sendChatworkMessage(token: string, roomId: string, body: string): Promise<boolean> {
+export async function sendChatworkMessage(token: string, roomId: string, body: string): Promise<{ success: boolean; error?: string }> {
     try {
         const response = await fetch(`https://api.chatwork.com/v2/rooms/${roomId}/messages`, {
             method: 'POST',
@@ -41,13 +41,24 @@ export async function sendChatworkMessage(token: string, roomId: string, body: s
         if (!response.ok) {
             const errorText = await response.text();
             console.error(`Chatwork API Error: ${response.status} ${response.statusText}`, errorText);
-            return false;
+
+            // Try to parse JSON error response from Chatwork
+            try {
+                const errorJson = JSON.parse(errorText);
+                if (errorJson.errors && errorJson.errors.length > 0) {
+                    return { success: false, error: errorJson.errors.join(', ') };
+                }
+            } catch (e) {
+                // Ignore JSON parse error
+            }
+
+            return { success: false, error: `API Error: ${response.status} ${response.statusText}` };
         }
 
-        return true;
+        return { success: true };
     } catch (error) {
         console.error('Failed to send Chatwork message:', error);
-        return false;
+        return { success: false, error: error instanceof Error ? error.message : 'Unknown error occurred' };
     }
 }
 
@@ -55,7 +66,8 @@ export function formatRankingMessage(
     template: string,
     siteName: string,
     period: string,
-    rankings: { keyword: string; rank: number | null; prevRank?: number | null }[]
+    rankings: { keyword: string; rank: number | null; prevRank?: number | null }[],
+    mentionId?: string | null
 ): string {
     let message = template || DEFAULT_MESSAGE_TEMPLATE;
 
@@ -65,6 +77,10 @@ export function formatRankingMessage(
         return `- ${r.keyword}: ${rankText}${prevText}`;
     }).join('\n');
 
+    // Handle Mention
+    const mentionTag = mentionId ? `[to:${mentionId}]` : '[toall]';
+
+    message = message.replace('{mention}', mentionTag);
     message = message.replace('{site_name}', siteName);
     message = message.replace('{period}', period);
     message = message.replace('{rankings}', rankingLines);

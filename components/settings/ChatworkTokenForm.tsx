@@ -101,7 +101,7 @@ export function ChatworkTokenForm() {
                 </CardDescription>
             </CardHeader>
             <form onSubmit={handleSave}>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 pb-6 pt-6">
                     <div className="space-y-2">
                         <Label htmlFor="token">APIトークン</Label>
                         <div className="relative">

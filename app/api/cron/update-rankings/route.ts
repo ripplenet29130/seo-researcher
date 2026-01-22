@@ -201,12 +201,12 @@ export async function GET(request: NextRequest) {
                             if (shouldReport) {
                                 console.log(`  Sending Chatwork report for ${site.site_name} to Room ${settings.room_id}`);
 
-                                const periodStr = settings.report_frequency === 'weekly' ? '週間レポート' : '月間レポート';
                                 const messageBody = formatRankingMessage(
                                     settings.message_template,
                                     site.site_name,
-                                    periodStr,
-                                    currentRankings
+                                    settings.report_frequency === 'weekly' ? '週間レポート' : '月間レポート',
+                                    currentRankings,
+                                    settings.report_mention_id
                                 );
 
                                 const sent = await sendChatworkMessage(chatworkToken, settings.room_id, messageBody);

@@ -72,15 +72,18 @@ export async function POST(request: NextRequest) {
             rankingsData.push({ keyword: 'サンプルキーワード', rank: 1 });
         }
 
+        // Create mention tag separately to place it outside [info] for better rendering
+        const mentionTag = mentionId ? `[to:${mentionId}]` : '[toall]';
+
         const formattedMessage = formatRankingMessage(
-            template,
+            template.replace('{mention}', ''), // Remove {mention} from template since we'll prepend it
             siteName,
             periodStr,
             rankingsData,
-            mentionId
+            '' // Pass empty string to avoid adding another mention via formatRankingMessage
         );
 
-        const message = `[info][title]テスト送信[/title]※これはSEO Researcherからのテスト配信です。\n\n${formattedMessage}[/info]`;
+        const message = `${mentionTag}\n[info][title]テスト送信[/title]※これはSEO Researcherからのテスト配信です。\n\n${formattedMessage.trim()}[/info]`;
 
         const result = await sendChatworkMessage(token, roomId, message);
 

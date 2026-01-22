@@ -10,6 +10,7 @@ export interface ChatworkSiteSettings {
     report_day_of_month: number; // 1-31
     report_period: number; // 7, 30, or 90 days
     report_mention_id: string | null;
+    report_mention_name: string | null;
     message_template: string;
     last_report_at: string | null;
     created_at: string;
@@ -29,8 +30,8 @@ export const DEFAULT_MESSAGE_TEMPLATE = `{mention}
 
 {site_name} の最新の検索順位レポート（集計期間: {period}）をお送りいたします。
 
---------------------------------------------------
+-------------------------
 {rankings}
---------------------------------------------------
+-------------------------
 
 ご確認のほど、よろしくお願いいたします。`;

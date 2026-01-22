@@ -60,6 +60,7 @@ export async function GET(request: NextRequest) {
         const dayOfWeek = jstDate.getUTCDay(); // 0 (Sunday) - 6 (Saturday)
         const dayOfMonth = jstDate.getUTCDate(); // 1-31
         const currentHour = jstDate.getUTCHours(); // 0-23 (JSTでの時刻)
+        const jstDateStr = `${jstDate.getMonth() + 1}/${jstDate.getDate()}`;
 
         console.log(`Current Time (JST): ${jstDate.toISOString()}, Hour: ${currentHour}, Day: ${dayOfWeek}, Date: ${dayOfMonth}`);
 
@@ -117,7 +118,7 @@ export async function GET(request: NextRequest) {
 
                 // 3. SerpApiで順位チェック（並列処理）
                 // 順位保存用バッファ
-                const currentRankings: { keyword: string; rank: number | null }[] = [];
+                const currentRankings: { keyword: string; keywordId: string; rank: number | null; checkDate?: string; device?: string; prevRank?: number | null }[] = [];
 
                 const rankingPromises = keywords.map(async (keyword) => {
                     try {
@@ -157,16 +158,24 @@ export async function GET(request: NextRequest) {
                         });
 
                         // Buffer for Chatwork report
-                        currentRankings.push({ keyword: keyword.keyword, rank });
+                        currentRankings.push({ keyword: keyword.keyword, keywordId: keyword.id, rank, checkDate: jstDateStr, device: keyword.device || 'desktop', prevRank: null });
                         results.keywordsProcessed++;
 
                     } catch (error: any) {
                         const errorMsg = `Failed to process keyword ${keyword.keyword}: ${error.message}`;
                         console.error(`    ❌ ${errorMsg}`);
                         results.errors.push(errorMsg);
-                        currentRankings.push({ keyword: keyword.keyword, rank: null });
+                        currentRankings.push({ keyword: keyword.keyword, keywordId: keyword.id, rank: null, checkDate: jstDateStr, device: keyword.device || 'desktop', prevRank: null });
                     }
                 });
+
+                // --- Fetch Comparison Rankings (Simple Batch) ---
+                // For Cron, we need to know the comparison period (e.g. 7 days ago or 30 days ago)
+                // Since this runs for each site, and we fetch settings later, we might need to fetch settings earlier or assume default.
+                // However, structure here is: Loop Sites -> Loop Keywords -> Fetch & Save -> Send Report.
+                // We'll fetch comparison data just before sending report inside the chatwork block to be efficient,
+                // OR we can fetch it here if we assume a standard period.
+                // Let's refine the Chatwork block to fetch past rankings.
 
                 await Promise.all(rankingPromises);
                 results.sitesProcessed++;
@@ -201,13 +210,54 @@ export async function GET(request: NextRequest) {
                             if (shouldReport) {
                                 console.log(`  Sending Chatwork report for ${site.site_name} to Room ${settings.room_id}`);
 
-                                const messageBody = formatRankingMessage(
-                                    settings.message_template,
+                                // Create mention tag
+                                let mentionTag = settings.report_mention_id ? `[To:${settings.report_mention_id}]` : '[toall]';
+                                if (settings.report_mention_id && settings.report_mention_name) {
+                                    mentionTag += ` ${settings.report_mention_name}`;
+                                }
+
+                                // Fetch Previous Rankings for Comparison
+                                const reportPeriod = settings.report_period || 7;
+                                const targetDate = new Date();
+                                targetDate.setDate(targetDate.getDate() - reportPeriod);
+                                const targetEndDate = new Date(targetDate);
+                                targetEndDate.setDate(targetEndDate.getDate() + 1); // target date end of day
+
+                                // Enhance currentRankings with prevRank
+                                for (const rankingItem of currentRankings) {
+                                    if (rankingItem.keywordId) {
+                                        const { data: pastRank } = await supabase
+                                            .from('rankings')
+                                            .select('rank')
+                                            .eq('keyword_id', rankingItem.keywordId)
+                                            .lte('checked_at', targetEndDate.toISOString())
+                                            .order('checked_at', { ascending: false })
+                                            .limit(1)
+                                            .single();
+
+                                        if (pastRank) {
+                                            rankingItem.prevRank = pastRank.rank;
+                                        }
+                                    }
+                                }
+
+                                let messageBody = formatRankingMessage(
+                                    settings.message_template.replace('{mention}', ''), // Remove placeholder
                                     site.site_name,
                                     settings.report_frequency === 'weekly' ? '週間レポート' : '月間レポート',
                                     currentRankings,
-                                    settings.report_mention_id
+                                    ''
                                 );
+
+                                // Remove any [info] or [title] tags that might be in the user's template (consistency with test send)
+                                messageBody = messageBody
+                                    .replace(/\[info\]/g, '')
+                                    .replace(/\[\/info\]/g, '')
+                                    .replace(/\[title\]/g, '')
+                                    .replace(/\[\/title\]/g, '');
+
+                                // Prepend mention tag
+                                messageBody = `${mentionTag}\n\n${messageBody.trim()}`;
 
                                 const sent = await sendChatworkMessage(chatworkToken, settings.room_id, messageBody);
                                 if (sent) {

@@ -30,6 +30,7 @@ export function ChatworkSettings({ siteId, siteName }: ChatworkSettingsProps) {
     const [reportDayOfMonth, setReportDayOfMonth] = useState(1);
     const [reportPeriod, setReportPeriod] = useState(7); // 7, 30, or 90 days
     const [reportMentionId, setReportMentionId] = useState('');
+    const [reportMentionName, setReportMentionName] = useState('');
     const [template, setTemplate] = useState(DEFAULT_MESSAGE_TEMPLATE);
 
     const supabase = createClient();
@@ -55,6 +56,7 @@ export function ChatworkSettings({ siteId, siteName }: ChatworkSettingsProps) {
                 setReportDayOfMonth(data.report_day_of_month);
                 setReportPeriod(data.report_period || 7);
                 setReportMentionId(data.report_mention_id || '');
+                setReportMentionName(data.report_mention_name || '');
                 setTemplate(data.message_template || DEFAULT_MESSAGE_TEMPLATE);
             }
         } catch (error) {
@@ -87,6 +89,7 @@ export function ChatworkSettings({ siteId, siteName }: ChatworkSettingsProps) {
                     report_day_of_month: reportDayOfMonth,
                     report_period: reportPeriod,
                     report_mention_id: reportMentionId,
+                    report_mention_name: reportMentionName,
                     message_template: template,
                 }, { onConflict: 'site_id' });
 
@@ -146,7 +149,8 @@ export function ChatworkSettings({ siteId, siteName }: ChatworkSettingsProps) {
                     siteId: siteId,
                     template: template,
                     reportPeriod: reportPeriod,
-                    mentionId: reportMentionId
+                    mentionId: reportMentionId,
+                    mentionName: reportMentionName
                 }),
             });
 
@@ -303,6 +307,19 @@ export function ChatworkSettings({ siteId, siteName }: ChatworkSettingsProps) {
                             />
                             <p className="text-xs text-muted-foreground">
                                 特定の個人にメンションを送る場合に、相手のアカウントIDを入力してください。
+                            </p>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="mentionName">通知先名（任意）</Label>
+                            <Input
+                                id="mentionName"
+                                value={reportMentionName}
+                                onChange={(e) => setReportMentionName(e.target.value)}
+                                placeholder="〇〇さん"
+                                className="max-w-md"
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                メンション時に表示される名前です。（例: [To:123] 〇〇さん）
                             </p>
                         </div>
                     </div>

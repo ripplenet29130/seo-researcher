@@ -66,19 +66,23 @@ export function formatRankingMessage(
     template: string,
     siteName: string,
     period: string,
-    rankings: { keyword: string; rank: number | null; prevRank?: number | null }[],
+    rankings: { keyword: string; rank: number | null; prevRank?: number | null; checkDate?: string; device?: string }[],
     mentionId?: string | null
 ): string {
     let message = template || DEFAULT_MESSAGE_TEMPLATE;
 
     const rankingLines = rankings.map(r => {
+        const datePrefix = r.checkDate ? `${r.checkDate} ` : '- ';
+        // Determine device icon: 'mobile' -> 📱, otherwise (desktop) -> 💻
+        const deviceIcon = r.device === 'mobile' ? '📱' : '💻';
+
         const rankText = r.rank ? `${r.rank}位` : '圏外';
         const prevText = r.prevRank ? ` (前: ${r.prevRank}位)` : '';
-        return `- ${r.keyword}: ${rankText}${prevText}`;
+        return `${datePrefix}"${r.keyword}" ${deviceIcon}: ${rankText}${prevText}`;
     }).join('\n');
 
     // Handle Mention
-    const mentionTag = mentionId ? `[to:${mentionId}]` : '[toall]';
+    const mentionTag = mentionId ? `[To:${mentionId}]` : '[toall]';
 
     message = message.replace('{mention}', mentionTag);
     message = message.replace('{site_name}', siteName);

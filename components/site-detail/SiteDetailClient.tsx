@@ -73,7 +73,7 @@ export function SiteDetailClient({
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-xl font-semibold">順位の推移</h2>
                         </div>
-                        <RankingChart keywords={chartKeywords} />
+                        <RankingChart keywords={chartKeywords} allKeywords={keywords} />
                     </section>
                 )}
 

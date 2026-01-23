@@ -1,8 +1,17 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { KeywordWithRanking } from '@/lib/types';
 import { getColorForKeyword } from '@/lib/utils';
+import { exportExcelReport } from '@/lib/export-utils';
+import { Download } from 'lucide-react';
 import {
     LineChart,
     Line,
@@ -14,7 +23,13 @@ import {
     Legend,
 } from 'recharts';
 
-export function RankingChart({ keywords }: { keywords: KeywordWithRanking[] }) {
+export function RankingChart({
+    keywords,
+    allKeywords
+}: {
+    keywords: KeywordWithRanking[];
+    allKeywords?: KeywordWithRanking[];
+}) {
     if (!keywords || keywords.length === 0) {
         return (
             <Card>
@@ -67,17 +82,58 @@ export function RankingChart({ keywords }: { keywords: KeywordWithRanking[] }) {
         });
     };
 
+    // 3. Prepare data for the report table (Matrix view: Date x Keywrod)
+    //    We reuse the dateMap logic but ensure it's fully populated
+    const reportDates = chartData.sort((a, b) => b.timestamp - a.timestamp); // Sort DESC for table
+
+    // Helper to get rank for a specific date and keyword
+    const getRankForDate = (dateStr: string, kwId: string) => {
+        // This `dataPoint` variable is not defined in this scope.
+        // It seems like this helper function was intended for a different context or needs `dataPoint` passed in.
+        // For now, returning null as it's not used in the current context.
+        return null;
+    };
+
+    const handleExportExcel = async () => {
+        try {
+            const targetKeywords = allKeywords && allKeywords.length > 0 ? allKeywords : keywords;
+            await exportExcelReport(
+                targetKeywords.length > 0 ? targetKeywords[0].keyword + '...' : 'SEO Report',
+                targetKeywords
+            );
+        } catch (e) {
+            console.error('Excel Export failed', e);
+            alert('Excelの出力に失敗しました。');
+        }
+    };
+
+
     return (
-        <Card>
-            <CardHeader>
+        <Card className="relative overflow-visible">
+            <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>
                     {keywords.length === 1
                         ? `順位の推移: ${keywords[0].keyword}`
                         : `順位の推移 (${keywords.length} キーワード)`}
                 </CardTitle>
+                <div className="flex gap-2">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="gap-2">
+                                <Download className="h-4 w-4" />
+                                レポート出力
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={handleExportExcel}>
+                                Excel形式 (.xlsx)
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </CardHeader>
             <CardContent>
-                <div className="h-[300px] w-full">
+                <div id="ranking-chart-container" className="h-[300px] w-full bg-white p-2">
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart
                             data={chartData}
@@ -111,7 +167,7 @@ export function RankingChart({ keywords }: { keywords: KeywordWithRanking[] }) {
                                                         const kw = keywords.find(k => k.id === kwId);
                                                         if (!kw) return null;
 
-                                                        const rankDisplay = entry.value === 100 ? '圈外' : `#${entry.value}`;
+                                                        const rankDisplay = entry.value === 100 ? '圏外' : `#${entry.value}`;
                                                         const deviceLabel = kw.device === 'mobile' ? ' (モバイル)' : ' (PC)';
 
                                                         return (
@@ -146,7 +202,7 @@ export function RankingChart({ keywords }: { keywords: KeywordWithRanking[] }) {
                                         dataKey={kw.id}
                                         stroke={color}
                                         strokeWidth={3}
-                                        dot={{ r: 4, fill: 'hsl(var(--background))', stroke: color, strokeWidth: 2 }}
+                                        dot={{ r: 4, fill: '#ffffff', stroke: color, strokeWidth: 2 }}
                                         activeDot={{ r: 6, stroke: color, strokeWidth: 2 }}
                                         name={`${kw.keyword}${deviceLabel}`}
                                         connectNulls

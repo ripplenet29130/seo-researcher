@@ -78,7 +78,7 @@ export function formatRankingMessage(
 
         const rankText = r.rank ? `${r.rank}位` : '圏外';
         const prevText = r.prevRank ? ` (前: ${r.prevRank}位)` : '';
-        return `${datePrefix}"${r.keyword}" ${deviceIcon}: ${rankText}${prevText}`;
+        return `${datePrefix}${deviceIcon} "${r.keyword}": ${rankText}${prevText}`;
     }).join('\n');
 
     // Handle Mention

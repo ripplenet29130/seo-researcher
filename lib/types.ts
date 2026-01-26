@@ -34,3 +34,14 @@ export type KeywordWithRanking = Keyword & {
   latest_checked_at: string | null;
   rankings?: Ranking[];
 };
+
+export type GSCDataRow = {
+  date: string;
+  clicks: number;
+  impressions: number;
+};
+
+export type GSCDataResponse = {
+  rows?: GSCDataRow[];
+  error?: string;
+};

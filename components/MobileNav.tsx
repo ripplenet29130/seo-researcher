@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useState } from "react";
 import Link from "next/link";
-import { Home, List, Settings, Search } from 'lucide-react';
+import { Home, List, Settings, Search, LogOut } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { signOut } from '@/app/actions/signOut';
 
 export function MobileNav() {
     const [open, setOpen] = useState(false);
@@ -58,6 +59,15 @@ export function MobileNav() {
                                 <p className="text-xs opacity-70">admin@example.com</p>
                             </div>
                         </div>
+                        <form action={signOut} className="mt-4">
+                            <button
+                                type="submit"
+                                className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive rounded-md transition-colors"
+                            >
+                                <LogOut size={18} />
+                                ログアウト
+                            </button>
+                        </form>
                     </div>
                 </SheetContent>
             </Sheet>

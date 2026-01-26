@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Site, KeywordWithRanking } from '@/lib/types';
+import { SearchConsoleChart } from '@/components/SearchConsoleChart';
+import { ConnectGscButton } from '@/components/ConnectGscButton';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const dynamic = 'force-dynamic';
 
@@ -56,6 +59,12 @@ export default async function SiteDetailPage({
     const typedSite = site as Site;
     const typedKeywords = keywordsWithRankings as KeywordWithRanking[];
 
+    // Get session to check for provider_token
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
+    const hasGscAccess = !!session?.provider_token;
+
     return (
         <div className="max-w-7xl mx-auto py-10 px-8">
             <div className="mb-6">
@@ -67,6 +76,25 @@ export default async function SiteDetailPage({
             </div>
 
             <SiteDetailClient site={typedSite} keywords={typedKeywords} />
+
+            {/* Google Search Console Section */}
+            <div className="mt-8">
+                {hasGscAccess ? (
+                    <SearchConsoleChart siteUrl={typedSite.site_url} days={30} />
+                ) : (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Google Search Console</CardTitle>
+                            <CardDescription>
+                                Search Consoleと連携して、検索パフォーマンスデータを表示します
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <ConnectGscButton />
+                        </CardContent>
+                    </Card>
+                )}
+            </div>
         </div>
     );
 }
